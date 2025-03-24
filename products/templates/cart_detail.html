@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart Details</title>
+</head>
+<body>
+<h2>Your Cart</h2>
+<ul>
+    {% for item in cart %}
+    <li>
+        {{ item.name }} - ${{ item.price }} ({{ item.quantity }})
+        <a href="{% url 'remove_from_cart' item.id %}">Remove</a>
+    </li>
+    {% empty %}
+        <p>Your cart is empty.</p>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
