@@ -1,0 +1,52 @@
+{% extends "admin/base_site.html" %}
+{% load plotly_dash %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<div>
+    <p><strong>Total Orders:</strong> {{ total_orders }}</p>
+    <p><strong>Paid Orders:</strong> {{ paid_orders }}</p>
+    <p><strong>Unpaid Orders:</strong> {{ unpaid_orders }}</p>
+    <p><strong>Total Revenue:</strong> ₦{{ total_revenue }}</p>
+</div>
+
+<h2>📊 Orders Chart</h2>
+<div>
+    {% plotly_app name="OrderStats" %}
+</div>
+
+<h2>🕒 Recent Orders (Last 7 Days)</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Total</th>
+        <th>Paid</th>
+        <th>Verified</th>
+        <th>Date</th>
+    </tr>
+    {% for order in recent_orders %}
+    <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.user.username }}</td>
+        <td>₦{{ order.total_price }}</td>
+        <td>{{ order.is_paid }}</td>
+        <td>{{ order.is_verified }}</td>
+        <td>{{ order.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<h2>🛒 Update Order Status</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="order_id">Order ID:</label>
+    <input type="text" name="order_id" id="order_id" required>
+    <label for="paid">Paid:</label>
+    <input type="checkbox" name="paid" id="paid">
+    <label for="verified">Verified:</label>
+    <input type="checkbox" name="verified" id="verified">
+    <button type="submit">Update Status</button>
+</form>
+
+{% endblock %}

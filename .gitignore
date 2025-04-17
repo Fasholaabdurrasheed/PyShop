@@ -10,6 +10,7 @@ db.sqlite3
 
 # Ignore VScode settings
 .vscode/
-
+# PyCharm
+.idea/
 # Ignore enviroment filles
 .env

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Bank Transfer | PyShop</title>
+</head>
+<body>
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h2>Review Bank Transfers</h2>
+
+{% for order in pending_orders %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>User:</strong> {{ order.user.username }} ({{ order.user.email }})</p>
+        <p><strong>Total:</strong> ${{ order.total_price }}</p>
+        <p><strong>Uploaded Proof:</strong><br>
+            {% if order.payment_proof %}
+                <img src="{{ order.payment_proof.url }}" style="max-width:300px;">
+            {% else %}
+                <em>No proof uploaded</em>
+            {% endif %}
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button type="submit" name="action" value="approve">✅ Approve</button>
+            <button type="submit" name="action" value="reject">❌ Reject</button>
+        </form>
+    </div>
+{% empty %}
+    <p>No pending bank transfers at the moment.</p>
+{% endfor %}
+{% endblock %}
+
+</body>
+</html>

@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from accounts.admin import custom_admin_site
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', custom_admin_site.urls),
+path('django-admin/', admin.site.urls),  # Optional fallback to default admin (dev use only)
     path('products/',include('products.urls')),
+    path('', include('accounts.urls')),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
+path('', include('products.urls')),  #  Home page from products app
 ]

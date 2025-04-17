@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: green;
+            margin-bottom: 20px;
+        }
+        .info {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .info p {
+            margin: 6px 0;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+
+        @media print {
+    .btn {
+        display: none;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Order Confirmed!</h2>
+    <p>Your order has been placed successfully.</p>
+
+    <div class="info">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>User:</strong> {{ order.user.username }} ({{ order.user.email }})</p>
+        <p><strong>Status:</strong> {{ order.status|capfirst }}</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method | capfirst}}</p>
+<p><strong>Payment Verified:</strong>
+    {% if order.is_verified %}
+        ✅ Verified
+    {% else %}
+        ❌ Not Verified
+    {% endif %}
+</p>
+
+        <p><strong>Payment Status:</strong> {{ order.is_paid|yesno:"Paid,Unpaid" }}</p>
+        <p><strong>Total Price:</strong> ${{ order.total_price }}</p>
+        <p><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+        {% if order.transaction_note %}
+        <p><strong>Note:</strong> {{ order.transaction_note }}</p>
+        {% endif %}
+    </div>
+
+    {% if order.items.exists %}
+    <h3>Order Items:</h3>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price (Each)</th>
+        </tr>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn">Continue Shopping</a>
+    <button class="btn" onclick="window.print()">🖨️ Print / Download Invoice</button>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | PyShop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .cart-summary {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            width: 100%;
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Checkout</h2>
+
+    <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <ul>
+            {% for item in cart_items %}
+                <li>{{ item.product.name }} - ${{ item.product.price }} (x{{ item.quantity }})</li>
+            {% empty %}
+                <p>Your cart is empty.</p>
+            {% endfor %}
+        </ul>
+        <strong>Total: ${{ total_price }}</strong>
+    </div>
+
+    <form id="checkout-form" method="post" action="{% url 'checkout' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="address">Shipping Address</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="payment_method">Payment Method</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="stripe">Credit Card (Stripe)</option>
+                <option value="bank_transfer">Bank Transfer</option>
+            </select>
+        </div>
+
+        <!-- Stripe Button Wrapper -->
+        <div id="stripe-section">
+            <button type="button" id="stripe-button" class="btn" style="background:#6772e5;">Pay with Card (Stripe)</button>
+        </div>
+
+        <!-- Bank Transfer Section -->
+        <div id="bank-transfer-section" class="hidden">
+            <div class="form-group">
+                <h4>Transfer To:</h4>
+                <p><strong>Account Name:</strong> {{ shop_account_name }}</p>
+                <p><strong>Account Number:</strong> {{ shop_account_number }}</p>
+                <p><strong>Bank Name:</strong> {{ shop_bank_name }}</p>
+                <p>Please make the transfer, then upload your payment proof below.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="bank_name">Your Bank Name</label>
+                <input type="text" name="bank_name" id="bank_name">
+            </div>
+
+            <div class="form-group">
+                <label for="account_name">Your Account Name</label>
+                <input type="text" name="account_name" id="account_name">
+            </div>
+
+            <div class="form-group">
+                <label for="payment_proof">Upload Payment Proof</label>
+                <input type="file" name="payment_proof" id="payment_proof">
+            </div>
+
+            <button type="submit" class="btn">Submit Bank Transfer</button>
+        </div>
+    </form>
+</div>
+
+<!-- Stripe Script -->
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script>
+    const paymentSelect = document.getElementById("payment_method");
+    const stripeSection = document.getElementById("stripe-section");
+    const bankTransferSection = document.getElementById("bank-transfer-section");
+    const stripeButton = document.getElementById("stripe-button");
+
+    paymentSelect.addEventListener("change", function () {
+        if (this.value === "bank_transfer") {
+            stripeSection.classList.add("hidden");
+            bankTransferSection.classList.remove("hidden");
+        } else {
+            stripeSection.classList.remove("hidden");
+            bankTransferSection.classList.add("hidden");
+        }
+    });
+
+    // Stripe Checkout trigger
+    stripeButton.addEventListener("click", function () {
+        const handler = StripeCheckout.configure({
+            key: "{{ stripe_public_key }}",
+            locale: 'auto',
+            token: function (token) {
+                // You can optionally send the token to your backend here
+                const form = document.getElementById("checkout-form");
+
+                const hiddenInput = document.createElement("input");
+                hiddenInput.setAttribute("type", "hidden");
+                hiddenInput.setAttribute("name", "stripe_token");
+                hiddenInput.setAttribute("value", token.id);
+                form.appendChild(hiddenInput);
+
+                form.submit();
+            }
+        });
+
+        handler.open({
+            name: "PyShop",
+            description: "Complete your order",
+            currency: "usd",
+            amount: {{ total_price_cent|default:"0" }},
+        });
+    });
+
+    // Initialize based on current selection
+    document.addEventListener("DOMContentLoaded", () => {
+        paymentSelect.dispatchEvent(new Event("change"));
+    });
+</script>
+</body>
+</html>

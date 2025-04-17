@@ -1,0 +1,119 @@
+/* General Styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+body {
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Authentication Container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.auth-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    transform: scale(0.95);
+    transition: 0.3s ease-in-out;
+}
+.auth-box:transform scale(1)
+
+/* Headings */
+.auth-box h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    transition:0.3s;
+}
+/* Input Field Focus Animation */
+.input.group input:focus{
+    border-color: #007bff;
+    box-shadow: (0, 123, 255, 0.2);
+}
+
+/* Buttons */
+.auth-btn {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight:600;
+    transition: 0.3s ease-in-out;
+}
+
+.auth-btn:hover {
+    background: #0056b3;
+    box-shadow: 0 5px 15px rgba(0, 91, 187,0.4)
+}
+
+/* Footer Links */
+.auth-footer {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.auth-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight:600;
+    transition: 0.3s;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Fade In Animation */
+@keyframes  fadeIn{
+    from{
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform:translateY(0);
+    }
+}
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

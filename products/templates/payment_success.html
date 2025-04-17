@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Successful | PyShop</title>
+</head>
+<body>
+{% extends "base.html" %}
+{% block content %}
+<h2>🎉 Payment Successful!</h2>
+<p>Your order has been placed. Thank you for shopping with us!</p>
+<a href="{% url 'product_list' %}">Continue Shopping</a>
+{% endblock %}
+</body>
+</html>
